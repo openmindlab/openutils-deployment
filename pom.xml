@@ -14,7 +14,7 @@
         <url>http://sourceforge.net/tracker/?group_id=150467&amp;atid=784057</url>
     </issueManagement>
     <scm>
-        <connection>scm:cvs:pserver:anonymous:@cvs.sourceforge.net:/cvsroot/openutils:openutils-deployment</connection>
+        <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/openutils:openutils-deployment</connection>
         <developerConnection>
             scm:cvs:ext:${maven.username}@cvs.sourceforge.net:/cvsroot/openutils:openutils-deployment
         </developerConnection>
@@ -107,6 +107,30 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changes-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
     <distributionManagement>
         <site>
             <id>default</id>
