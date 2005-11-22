@@ -1,4 +1,4 @@
-package it.openutils.log4j;
+package it.openutils.deployment.spring;
 
 import java.io.File;
 import java.net.InetAddress;

@@ -1,4 +1,4 @@
-package it.openutils.log4j;
+package it.openutils.deployment.log4j;
 
 import java.io.FileNotFoundException;
 
