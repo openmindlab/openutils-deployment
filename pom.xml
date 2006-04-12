@@ -3,7 +3,7 @@
   <groupId>net.sourceforge.openutils</groupId>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
-  <version>0.1</version>
+  <version>1.0-SNAPSHOT</version>
   <description></description>
   <url>http://openutils.sourceforge.net</url>
   <issueManagement>
@@ -30,9 +30,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-0.1</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-0.1</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/tags/openutils-deployment-0.1</url>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</connection>
+    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</developerConnection>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/trunk/openutils-deployment</url>
   </scm>
   <organization>
     <name>Fabrizio Giustina</name>
