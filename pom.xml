@@ -1,36 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.openutils</groupId>
   <artifactId>openutils-deployment</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
   <name>openutils deployment tools</name>
+  <version>0.1</version>
   <description></description>
   <url>http://openutils.sourceforge.net</url>
   <issueManagement>
     <system>sourceforge</system>
     <url>http://sourceforge.net/tracker/?group_id=150467&amp;atid=784057</url>
   </issueManagement>
-  <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</connection>
-    <developerConnection>
-      scm:svn:https://svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment
-    </developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/trunk/openutils-deployment</url>
-  </scm>
-  <organization>
-    <name>Fabrizio Giustina</name>
-    <url>http://openutils.sourceforge.net</url>
-  </organization>
-  <licenses>
-    <license>
-      <name>Apache Software License</name>
-      <distribution>repo</distribution>
-      <url>LICENSE.txt</url>
-    </license>
-  </licenses>
   <developers>
     <developer>
       <id>fgiust</id>
@@ -43,10 +22,25 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
+  <licenses>
+    <license>
+      <name>Apache Software License</name>
+      <url>LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-0.1</connection>
+    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-0.1</developerConnection>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/tags/openutils-deployment-0.1</url>
+  </scm>
+  <organization>
+    <name>Fabrizio Giustina</name>
+    <url>http://openutils.sourceforge.net</url>
+  </organization>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>1.5</source>
@@ -54,7 +48,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
@@ -69,6 +62,28 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>1.2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.9</version>
@@ -78,42 +93,11 @@
       <artifactId>mail</artifactId>
       <version>1.3.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>1.2.6</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changes-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>surefire-report-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -121,20 +105,28 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>changes-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>surefire-report-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>
   <distributionManagement>
+    <repository>
+      <id>sourceforge</id>
+      <url>scpexe://shell.sourceforge.net/home/groups/o/op/openutils/htdocs/m2repo</url>
+    </repository>
     <site>
       <id>default</id>
       <name>sourceforge</name>
       <url>scpexe://shell.sourceforge.net/home/groups/o/op/openutils/htdocs/openutils-deployment</url>
     </site>
     <downloadUrl>http://prdownloads.sourceforge.net/150467</downloadUrl>
-    <repository>
-      <id>sourceforge</id>
-      <url>scpexe://shell.sourceforge.net/home/groups/o/op/openutils/htdocs/m2repo</url>
-    </repository>
   </distributionManagement>
 </project>
