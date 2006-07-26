@@ -6,7 +6,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.springframework.util.Log4jConfigurer;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.Log4jConfigListener;
 import org.springframework.web.util.WebUtils;
 
