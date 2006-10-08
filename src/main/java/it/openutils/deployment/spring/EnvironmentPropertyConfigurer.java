@@ -9,7 +9,8 @@ import java.net.UnknownHostException;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -20,7 +21,7 @@ import org.springframework.web.context.ServletContextAware;
 
 /**
  * @author fgiust
- * @version $Revision$ ($Author$)
+ * @version $Id: $
  */
 public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ServletContextAware
 {
@@ -34,10 +35,10 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     /**
      * Logger.
      */
-    private static Logger log = Logger.getLogger(EnvironmentPropertyConfigurer.class);
+    private static Logger log = LoggerFactory.getLogger(EnvironmentPropertyConfigurer.class);
 
     /**
-     * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
+     * {@inheritDoc}
      */
     public void setServletContext(ServletContext servletContext)
     {
@@ -102,8 +103,9 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     }
 
     /**
-     * @see org.springframework.beans.factory.config.PropertyResourceConfigurer#postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory)
+     * {@inheritDoc}
      */
+    @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
     {
         if (fileLocation != null)
@@ -129,7 +131,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             if (propertyUrl == null)
             {
-                log.info("No environment specific properties found at " + resolvedLocation + ", using default");
+                log.info("No environment specific properties found at {}, using default", resolvedLocation);
                 resolvedLocation = StringUtils.replace(fileLocation, "${env}", this.defaultEnvironment);
 
                 propertyUrl = getResource(resolvedLocation);
@@ -138,7 +140,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             if (propertyUrl == null)
             {
-                log.error("No default properties found at " + resolvedLocation);
+                log.error("No default properties found at {}", resolvedLocation);
             }
             else
             {

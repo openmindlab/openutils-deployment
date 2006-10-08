@@ -28,8 +28,9 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
         + "WEB-INF/config/log4j.xml"; //$NON-NLS-1$
 
     /**
-     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * {@inheritDoc}
      */
+    @Override
     public void contextInitialized(ServletContextEvent event)
     {
         initLogging(event.getServletContext());
