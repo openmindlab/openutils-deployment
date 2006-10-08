@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sourceforge.openutils</groupId>
@@ -10,8 +8,8 @@
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
-  <version>1.0-SNAPSHOT</version>
-  <description></description>
+  <version>1.0</version>
+  <description />
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -69,4 +67,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-1.0</connection>
+    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-1.0</developerConnection>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/tags/openutils-deployment-1.0</url>
+  </scm>
 </project>
