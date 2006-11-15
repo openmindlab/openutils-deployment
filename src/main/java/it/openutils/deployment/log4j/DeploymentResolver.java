@@ -35,7 +35,7 @@ public class DeploymentResolver
             System.err.println(e.getMessage());
         }
 
-        String rootPath = StringUtils.replace(context.getRealPath(StringUtils.EMPTY), "\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        String rootPath = StringUtils.replace(context.getRealPath("/"), "\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
         String webapp = StringUtils.substringAfterLast(rootPath, "/"); //$NON-NLS-1$
 
         for (int j = 0; j < propertiesLocation.length; j++)
