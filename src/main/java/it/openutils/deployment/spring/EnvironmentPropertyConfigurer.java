@@ -1,6 +1,7 @@
 package it.openutils.deployment.spring;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -81,10 +82,21 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             try
             {
                 url = servletContext.getResource(resource);
+
+                // check needed for servletUnit
+                // we need to check for a connection because getResource always returns a URL, also if the resource
+                // doesn't exists
+                url.openConnection().connect();
+
             }
             catch (MalformedURLException e)
             {
                 log.error(e.getMessage(), e);
+            }
+            catch (IOException e)
+            {
+                // ignore, URL is not a valid resource
+                url = null;
             }
         }
         else
