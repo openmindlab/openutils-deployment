@@ -8,7 +8,7 @@
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <description />
   <dependencies>
     <dependency>
@@ -67,10 +67,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-1.0.2</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-1.0.2</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/openutils/tags/openutils-deployment-1.0.2</url>
-  </scm>
 </project>
