@@ -83,10 +83,13 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             {
                 url = servletContext.getResource(resource);
 
-                // check needed for servletUnit
-                // we need to check for a connection because getResource always returns a URL, also if the resource
-                // doesn't exists
-                url.openConnection().connect();
+                if (url != null)
+                {
+                    // check needed for servletUnit
+                    // we need to check for a connection because getResource always returns a URL, also if the resource
+                    // doesn't exists
+                    url.openConnection().connect();
+                }
 
             }
             catch (MalformedURLException e)
