@@ -100,10 +100,16 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 log.error(e.getMessage()); // should not happen
             }
 
-            System.setProperty("env", hostname);
+            if (hostname != null)
+            {
+                System.setProperty("env", hostname);
+            }
 
             String applName = getApplicationName();
-            System.setProperty("appl", applName);
+            if (applName != null)
+            {
+                System.setProperty("appl", applName);
+            }
 
             URL propertyUrl = null;
 
