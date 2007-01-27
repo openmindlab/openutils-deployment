@@ -1,6 +1,6 @@
 package it.openutils.deployment.spring;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ServletContextAware;
 
 
@@ -27,16 +28,30 @@ import org.springframework.web.context.ServletContextAware;
 public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ServletContextAware
 {
 
-    private String fileLocation;
+    /**
+     * Application name (webapp name) variable.
+     */
+    private static final String PROPERTY_APPL = "${appl}";
 
-    private String defaultEnvironment;
-
-    private ServletContext servletContext;
+    /**
+     * Environment (server name) variable.
+     */
+    private static final String PROPERTY_ENV = "${env}";
 
     /**
      * Logger.
      */
     private static Logger log = LoggerFactory.getLogger(EnvironmentPropertyConfigurer.class);
+
+    /**
+     * @deprecated use defaultLocation
+     */
+    @Deprecated
+    private String defaultEnvironment;
+
+    private ServletContext servletContext;
+
+    private String fileLocation;
 
     /**
      * {@inheritDoc}
@@ -58,19 +73,75 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     /**
      * Setter for <code>defaultEnvironment</code>.
      * @param defaultEnvironment The defaultEnvironment to set.
+     * @deprecated use defaultLocation
      */
+    @Deprecated
     public void setDefaultEnvironment(String defaultEnvironment)
     {
         this.defaultEnvironment = defaultEnvironment;
     }
 
-    private String getRootPath()
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
     {
-        if (servletContext != null)
+        if (fileLocation != null)
         {
-            return servletContext.getRealPath("/");
+
+            String hostname = null;
+            try
+            {
+                hostname = StringUtils.lowerCase(InetAddress.getLocalHost().getHostName());
+            }
+            catch (UnknownHostException e)
+            {
+                log.error(e.getMessage()); // should not happen
+            }
+
+            System.setProperty("env", hostname);
+
+            String applName = getApplicationName();
+            System.setProperty("appl", applName);
+
+            URL propertyUrl = null;
+
+            String replacedLocations = StringUtils.replace(fileLocation, PROPERTY_ENV, hostname);
+            replacedLocations = StringUtils.replace(replacedLocations, PROPERTY_APPL, applName);
+
+            String[] locations = StringUtils.split(replacedLocations, ",");
+
+            for (String loc : locations)
+            {
+                propertyUrl = getResource(StringUtils.strip(loc));
+                if (propertyUrl != null)
+                {
+                    break;
+                }
+                log.debug("Property file not found at {}", loc);
+            }
+
+            if (propertyUrl == null && defaultEnvironment != null)
+            {
+                log.warn("Usage of \"defaultEnvironment\" is deprecated, please specify the fallback location "
+                    + "as the last comma separated value in \"fileLocation\"");
+                propertyUrl = getResource(StringUtils.replace(fileLocation, PROPERTY_ENV, this.defaultEnvironment));
+
+            }
+
+            if (propertyUrl == null)
+            {
+                log.error("No properties found at {}", replacedLocations);
+            }
+            else
+            {
+                Resource resource = new UrlResource(propertyUrl);
+                super.setLocation(resource);
+            }
         }
-        return "src/main/webapp/";
+
+        super.postProcessBeanFactory(beanFactory);
     }
 
     private URL getResource(String resource)
@@ -106,65 +177,30 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         {
             try
             {
-                return new File(getRootPath(), resource).toURL();
+                url = ResourceUtils.getURL(resource);
             }
-            catch (MalformedURLException e)
+            catch (FileNotFoundException e)
             {
-                log.error(e.getMessage(), e);
+                // ignore, can be normal
             }
-            // test
         }
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
+    private String getApplicationName()
     {
-        if (fileLocation != null)
+        if (servletContext != null)
         {
-
-            String hostname = null;
-
-            try
+            String url = servletContext.getRealPath("/");
+            url = StringUtils.replace(url, "\\", "/");
+            if (url.endsWith("/"))
             {
-                hostname = StringUtils.lowerCase(InetAddress.getLocalHost().getHostName());
-            }
-            catch (UnknownHostException e)
-            {
-                log.error(e.getMessage());
+                url = StringUtils.substringBeforeLast(url, "/");
             }
 
-            System.setProperty("env", hostname);
-
-            String resolvedLocation = StringUtils.replace(fileLocation, "${env}", hostname);
-            URL propertyUrl = null;
-
-            propertyUrl = getResource(resolvedLocation);
-
-            if (propertyUrl == null)
-            {
-                log.info("No environment specific properties found at {}, using default", resolvedLocation);
-                resolvedLocation = StringUtils.replace(fileLocation, "${env}", this.defaultEnvironment);
-
-                propertyUrl = getResource(resolvedLocation);
-
-            }
-
-            if (propertyUrl == null)
-            {
-                log.error("No default properties found at {}", resolvedLocation);
-            }
-            else
-            {
-                Resource resource = new UrlResource(propertyUrl);
-                super.setLocation(resource);
-            }
+            return StringUtils.substringAfterLast(url, "/");
         }
-
-        super.postProcessBeanFactory(beanFactory);
+        return null;
     }
 
 }
