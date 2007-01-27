@@ -93,7 +93,9 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             String hostname = null;
             try
             {
-                hostname = StringUtils.lowerCase(InetAddress.getLocalHost().getHostName());
+                hostname = StringUtils.substringBefore(
+                    StringUtils.lowerCase(InetAddress.getLocalHost().getHostName()),
+                    ".");
             }
             catch (UnknownHostException e)
             {
