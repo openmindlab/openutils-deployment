@@ -22,10 +22,12 @@
       <version>2.0.1</version>
       <optional>true</optional>
       <exclusions>
+      <!-- 
         <exclusion>
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
+ 	  -->        
         <exclusion>
           <groupId>logkit</groupId>
           <artifactId>logkit</artifactId>
