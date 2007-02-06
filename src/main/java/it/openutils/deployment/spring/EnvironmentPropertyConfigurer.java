@@ -160,7 +160,14 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         {
             try
             {
-                url = servletContext.getResource(resource);
+                if (resource != null && !resource.startsWith("/"))
+                {
+                    url = servletContext.getResource("/" + resource);
+                }
+                else
+                {
+                    url = servletContext.getResource(resource);
+                }
 
                 if (url != null)
                 {
