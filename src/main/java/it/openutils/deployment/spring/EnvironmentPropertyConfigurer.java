@@ -193,10 +193,12 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             try
             {
                 url = ResourceUtils.getURL(resource);
+                url.openStream().close(); // test if the resource actually exists
             }
-            catch (FileNotFoundException e)
+            catch (IOException e)
             {
                 // ignore, can be normal
+                url = null;
             }
         }
         return url;
@@ -215,7 +217,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             return StringUtils.substringAfterLast(url, "/");
         }
-        return null;
+        return StringUtils.EMPTY;
     }
 
 }
