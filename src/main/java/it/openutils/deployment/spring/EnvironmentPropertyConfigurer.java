@@ -2,13 +2,16 @@ package it.openutils.deployment.spring;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     private String fileLocation;
 
     /**
+     * Are properties inherited from default configuration? default is true,
+     */
+    private boolean inherit = true;
+
+    /**
      * {@inheritDoc}
      */
     public void setServletContext(ServletContext servletContext)
@@ -68,6 +76,15 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     public void setFileLocation(String fileLocation)
     {
         this.fileLocation = fileLocation;
+    }
+
+    /**
+     * Sets the inherit.
+     * @param inherit the inherit to set
+     */
+    public void setInherit(boolean inherit)
+    {
+        this.inherit = inherit;
     }
 
     /**
@@ -115,38 +132,81 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             URL propertyUrl = null;
 
-            String replacedLocations = StringUtils.replace(fileLocation, PROPERTY_ENV, hostname);
+            String fileLocationFull = fileLocation;
+
+            if (defaultEnvironment != null)
+            {
+                log.warn("Usage of \"defaultEnvironment\" is deprecated, please specify the fallback location "
+                    + "as the last comma separated value in \"fileLocation\"");
+                fileLocationFull = fileLocationFull
+                    + ","
+                    + StringUtils.replace(fileLocationFull, PROPERTY_ENV, this.defaultEnvironment);
+            }
+
+            String replacedLocations = StringUtils.replace(fileLocationFull, PROPERTY_ENV, hostname);
             replacedLocations = StringUtils.replace(replacedLocations, PROPERTY_APPL, applName);
 
             String[] locations = StringUtils.split(replacedLocations, ",");
+
+            if (inherit)
+            {
+                ArrayUtils.reverse(locations);
+            }
+
+            Properties props = new Properties();
+            boolean found = false;
 
             for (String loc : locations)
             {
                 propertyUrl = getResource(StringUtils.strip(loc));
                 if (propertyUrl != null)
                 {
-                    break;
+                    found = true;
+                    log.debug("Loading property file at {}", loc);
+
+                    Resource resource = new UrlResource(propertyUrl);
+                    InputStream is = null;
+
+                    try
+                    {
+                        is = resource.getInputStream();
+                        props.load(is);
+                    }
+                    catch (IOException e)
+                    {
+                        log.error("Error loading " + propertyUrl.toString(), e);
+                    }
+                    finally
+                    {
+                        if (is != null)
+                        {
+                            try
+                            {
+                                is.close();
+                            }
+                            catch (IOException e)
+                            {
+                                // ignore
+                            }
+                        }
+                    }
+
+                    if (!inherit)
+                    {
+                        break;
+                    }
                 }
                 log.debug("Property file not found at {}", loc);
-            }
-
-            if (propertyUrl == null && defaultEnvironment != null)
-            {
-                log.warn("Usage of \"defaultEnvironment\" is deprecated, please specify the fallback location "
-                    + "as the last comma separated value in \"fileLocation\"");
-                propertyUrl = getResource(StringUtils.replace(fileLocation, PROPERTY_ENV, this.defaultEnvironment));
 
             }
 
-            if (propertyUrl == null)
+            if (!found)
             {
                 log.error("No properties found at {}", replacedLocations);
             }
-            else
-            {
-                Resource resource = new UrlResource(propertyUrl);
-                super.setLocation(resource);
-            }
+
+            super.setProperties(props);
+
         }
 
         super.postProcessBeanFactory(beanFactory);
