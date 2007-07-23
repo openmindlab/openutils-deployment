@@ -39,8 +39,6 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
 
     private DataSource dataSource;
 
-    private Properties props;
-
     private ApplicationContext applicationContext;
 
     public void setSqlQuery(String sqlQuery)
@@ -64,13 +62,21 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
     /**
      * Get Spring Context proprieties.
      * @return A properties object containing all spring properties.
-     * @throws IOException Any IOException.
      */
-    public Properties getProperties() throws IOException
+    @Override
+    public Properties getProperties()
     {
-        props = mergeProperties();
+        // loadAndRefresh(); @todo is this needed anymore?
+        return properties;
+    }
+
+    /**
+     * @throws IOException
+     */
+    private void loadAndRefresh() throws IOException
+    {
+        properties = mergeProperties();
         refresh();
-        return props;
     }
 
     /**
@@ -97,7 +103,7 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
                 String parmValue = rs.getString(2);
 
                 log.debug("Configuring property {}={}", parmName, parmValue);
-                props.put(parmName, parmValue);
+                properties.put(parmName, parmValue);
 
             }
         }
@@ -122,7 +128,7 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
     }
 
     /**
-     * 
+     *
      */
     private void manuallyLoadDatasource()
     {
@@ -131,7 +137,7 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
             dataSource = (DataSource) applicationContext.getBean(dataSourceName);
             try
             {
-                props = mergeProperties();
+                properties = mergeProperties();
             }
             catch (IOException e)
             {
@@ -151,7 +157,8 @@ public class DatabaseEnvironmentPropertyConfigurer extends EnvironmentPropertyCo
 
         try
         {
-            Properties mergedProps = getProperties();
+            loadAndRefresh();
+            Properties mergedProps = properties;
 
             // Convert the merged properties, if necessary.
             convertProperties(mergedProps);

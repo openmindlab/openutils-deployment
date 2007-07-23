@@ -1,6 +1,5 @@
 package it.openutils.deployment.spring;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -55,6 +54,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     private ServletContext servletContext;
 
     private String fileLocation;
+
+    /**
+     * Cached properties (super field is private).
+     */
+    protected Properties properties;
 
     /**
      * Are properties inherited from default configuration? default is true,
@@ -205,6 +209,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 log.error("No properties found at {}", replacedLocations);
             }
 
+            this.properties = props;
             super.setProperties(props);
 
         }
@@ -278,6 +283,30 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             return StringUtils.substringAfterLast(url, "/");
         }
         return StringUtils.EMPTY;
+    }
+
+    /**
+     * Returns the Properties loaded by this configurer.
+     * @return Properties
+     */
+    public Properties getProperties()
+    {
+        return properties;
+    }
+
+    /**
+     * Returns a single property.
+     * @param key Property key
+     * @return property value or <code>null</code> if not found.
+     */
+    public String getProperty(String key)
+    {
+        // better be safe, it doesn't hurt
+        if (properties == null)
+        {
+            return null;
+        }
+        return properties.getProperty(key);
     }
 
 }
