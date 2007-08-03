@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sourceforge.openutils</groupId>
@@ -10,6 +11,9 @@
   <name>openutils deployment tools</name>
   <version>1.0.9-SNAPSHOT</version>
   <description />
+  <properties>
+    <spring.version>2.0.6</spring.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -19,7 +23,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>2.0.1</version>
+      <version>${spring.version}</version>
       <optional>true</optional>
       <exclusions>
         <exclusion>
@@ -35,7 +39,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>2.0.1</version>
+      <version>${spring.version}</version>
       <optional>true</optional>
       <exclusions>
         <exclusion>
