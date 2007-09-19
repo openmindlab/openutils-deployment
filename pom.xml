@@ -43,19 +43,21 @@
       <optional>true</optional>
       <exclusions>
         <exclusion>
-          <groupId>logkit</groupId>
-          <artifactId>logkit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>avalon-framework</groupId>
-          <artifactId>avalon-framework</artifactId>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.2</version>
+      <version>1.4.1</version>
+    </dependency>
+    <dependency>
+      <!--  replaces commons-logging -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl104-over-slf4j</artifactId>
+      <version>1.4.1</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
