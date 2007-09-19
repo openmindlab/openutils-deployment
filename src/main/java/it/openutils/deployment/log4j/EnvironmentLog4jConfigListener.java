@@ -41,6 +41,12 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
         if (exposeWebAppRoot(servletContext))
         {
             WebUtils.setWebAppRootSystemProperty(servletContext);
+
+            String servername = DeploymentResolver.resolveServerName();
+            if (servername != null)
+            {
+                System.setProperty("server.name", servername);
+            }
         }
 
         String locationList = servletContext.getInitParameter("log4jConfigLocation");
@@ -65,12 +71,10 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
             servletContext.log("Initializing Log4J from [" + location + "]");
             try
             {
-                // if (!ResourceUtils.isUrl(location))
-                // {
-                // location = WebUtils.getRealPath(servletContext, location);
-                // }
+
                 String intervalString = servletContext.getInitParameter("log4jRefreshInterval");
                 if (intervalString != null)
+                {
                     try
                     {
                         long refreshInterval = Long.parseLong(intervalString);
@@ -81,6 +85,7 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
                         throw new IllegalArgumentException("Invalid 'log4jRefreshInterval' parameter: "
                             + ex.getMessage());
                     }
+                }
                 else
                 {
                     Log4jConfigurer.initLogging(location);

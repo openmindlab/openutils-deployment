@@ -24,16 +24,7 @@ public class DeploymentResolver
     {
         String[] propertiesLocation = StringUtils.split(commaSeparatedListOfPaths, ',');
 
-        String servername = null;
-
-        try
-        {
-            servername = StringUtils.lowerCase(InetAddress.getLocalHost().getHostName());
-        }
-        catch (UnknownHostException e)
-        {
-            System.err.println(e.getMessage());
-        }
+        String servername = resolveServerName();
 
         String rootPath = StringUtils.replace(context.getRealPath("/"), "\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
         String webapp = StringUtils.substringAfterLast(rootPath, "/"); //$NON-NLS-1$
@@ -59,7 +50,31 @@ public class DeploymentResolver
             MessageFormat
                 .format(
                     "No configuration found using location list {0}. [servername] is [{1}], [webapp] is [{2}] and base path is [{3}]", //$NON-NLS-1$
-                    new Object[]{ArrayUtils.toString(propertiesLocation), servername, webapp, rootPath}));
+                    new Object[]{ArrayUtils.toString(propertiesLocation), servername, webapp, rootPath }));
 
+    }
+
+    /**
+     * Resolve the current server name.
+     * @return server name, all lowercase, without domain
+     */
+    public static String resolveServerName()
+    {
+        String servername = null;
+
+        try
+        {
+            servername = StringUtils.lowerCase(InetAddress.getLocalHost().getHostName());
+            if (StringUtils.contains(servername, "."))
+            {
+                servername = StringUtils.substringBefore(servername, ".");
+            }
+
+        }
+        catch (UnknownHostException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        return servername;
     }
 }
