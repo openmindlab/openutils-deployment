@@ -46,6 +46,7 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
             if (servername != null)
             {
                 System.setProperty("server.name", servername);
+                System.setProperty("server", servername);
             }
         }
 
