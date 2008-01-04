@@ -1,18 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sourceforge.openutils</groupId>
     <artifactId>openutils</artifactId>
-    <version>3</version>
+    <version>5</version>
     <relativePath>..</relativePath>
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
   <version>1.0.11-SNAPSHOT</version>
   <description />
-  <properties>
-    <spring.version>2.0.6</spring.version>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -46,13 +44,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.3</version>
     </dependency>
     <dependency>
-      <!--  replaces commons-logging -->
       <groupId>org.slf4j</groupId>
       <artifactId>jcl104-over-slf4j</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.3</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -68,4 +65,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <spring.version>2.5</spring.version>
+  </properties>
 </project>
