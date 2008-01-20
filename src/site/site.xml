@@ -13,7 +13,11 @@
     <menu ref="modules" inherit="bottom" />
     <menu ref="reports" inherit="bottom" />
     <head>
-      <style type="text/css" media="all">@import url(../css/site.css);</style>
+      <link rel="icon" href="images/favicon.ico" />
     </head>
   </body>
+  <skin>
+    <groupId>net.sourceforge.openutils</groupId>
+    <artifactId>openutils-maven-skin</artifactId>
+  </skin>
 </project>
