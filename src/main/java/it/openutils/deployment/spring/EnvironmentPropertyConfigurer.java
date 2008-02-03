@@ -17,17 +17,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.WebApplicationContext;
 
 
 /**
  * @author fgiust
  * @version $Id: $
  */
-public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ServletContextAware
+public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ApplicationContextAware
 {
 
     /**
@@ -64,14 +66,6 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      * Are properties inherited from default configuration? default is true,
      */
     private boolean inherit = true;
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setServletContext(ServletContext servletContext)
-    {
-        this.servletContext = servletContext;
-    }
 
     /**
      * Setter for <code>fileLocation</code>.
@@ -309,4 +303,21 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         return properties.getProperty(key);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
+    {
+        try
+        {
+            if (applicationContext instanceof WebApplicationContext)
+            {
+                this.servletContext = ((WebApplicationContext) applicationContext).getServletContext();
+            }
+        }
+        catch (NoClassDefFoundError e)
+        {
+            // ignore, we are not in a web project or spring web is not available
+        }
+    }
 }
