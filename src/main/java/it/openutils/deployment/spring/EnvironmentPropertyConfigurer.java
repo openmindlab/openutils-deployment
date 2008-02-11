@@ -230,7 +230,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     {
         URL url = null;
 
-        if (servletContext != null)
+        if (servletContext != null && !StringUtils.contains(resource, "classpath:"))
         {
             try
             {
@@ -262,7 +262,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 url = null;
             }
         }
-        else
+        if (url == null)
         {
             try
             {
@@ -323,6 +323,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
+        // don't implement ServletContextAware or it will fail if javax.servlet dependency is not available
         try
         {
             if (applicationContext instanceof WebApplicationContext)
