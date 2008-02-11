@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  "type" attribute can be: add, remove, update or fix.
+-->
+<document>
+  <properties>
+    <title>Changes</title>
+    <author email="fgiust(at)users.sourceforge.net">Fabrizio Giustina</author>
+  </properties>
+  <body>
+    <release version="2.0.1" date="2008-02-11" description="2.0.1">
+      <action type="fix" dev="fgiust">
+        Better handling of classpath resources in it.openutils.deployment.spring.EnvironmentPropertyConfigurer
+        (resources with "classpath:" prefix were not loaded properly in a web application).
+      </action>
+    </release>
+  </body>
+</document>
