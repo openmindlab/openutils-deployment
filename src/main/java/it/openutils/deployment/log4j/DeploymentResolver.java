@@ -25,6 +25,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,6 +36,11 @@ import org.apache.commons.lang.StringUtils;
 public class DeploymentResolver
 {
 
+    /**
+     * Logger.
+     */
+    private static Logger log = LoggerFactory.getLogger(DeploymentResolver.class);
+
     public static File resolveServerRelativeLocation(ServletContext context, String commaSeparatedListOfPaths)
         throws FileNotFoundException
     {
@@ -41,8 +48,10 @@ public class DeploymentResolver
 
         String servername = resolveServerName();
 
-        String rootPath = StringUtils.replace(context.getRealPath("/"), "\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+        String rootPath = StringUtils.stripEnd(StringUtils.replace(context.getRealPath("/"), "\\", "/"), "/"); //$NON-NLS-1$ //$NON-NLS-2$
         String webapp = StringUtils.substringAfterLast(rootPath, "/"); //$NON-NLS-1$
+
+        log.info("Resolving log configuration using servername={} and webapp={}", servername, webapp);
 
         for (int j = 0; j < propertiesLocation.length; j++)
         {
@@ -54,8 +63,11 @@ public class DeploymentResolver
 
             if (!initFile.exists() || initFile.isDirectory())
             {
+                log.debug("Log4j config not found at {}", initFile.getAbsolutePath());
                 continue;
             }
+
+            log.debug("Log4j config FOUND at {}", initFile.getAbsolutePath());
 
             return initFile;
 
@@ -65,7 +77,7 @@ public class DeploymentResolver
             MessageFormat
                 .format(
                     "No configuration found using location list {0}. [servername] is [{1}], [webapp] is [{2}] and base path is [{3}]", //$NON-NLS-1$
-                    new Object[]{ArrayUtils.toString(propertiesLocation), servername, webapp, rootPath}));
+                    new Object[]{ArrayUtils.toString(propertiesLocation), servername, webapp, rootPath }));
 
     }
 
