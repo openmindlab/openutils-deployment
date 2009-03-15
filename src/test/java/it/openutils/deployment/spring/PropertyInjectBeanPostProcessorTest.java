@@ -32,7 +32,7 @@ public class PropertyInjectBeanPostProcessorTest extends AbstractJUnit4SpringCon
 {
 
     @Autowired(required = true)
-    private TestBean testBean;
+    private SampleBean testBean;
 
     @Test
     public void testIntProperty()

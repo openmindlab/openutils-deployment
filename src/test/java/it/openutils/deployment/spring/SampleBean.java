@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
  * @version $Id$
  */
 @Component
-public class TestBean
+public class SampleBean
 {
 
     @Property("intProperty")
