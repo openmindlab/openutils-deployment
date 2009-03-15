@@ -15,8 +15,10 @@
  */
 package it.openutils.deployment.spring;
 
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,8 +32,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
@@ -44,7 +48,10 @@ import org.springframework.web.context.WebApplicationContext;
  * @author fgiust
  * @version $Id: $
  */
-public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ApplicationContextAware
+public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
+    implements
+    ApplicationContextAware,
+    SmartInstantiationAwareBeanPostProcessor
 {
 
     /**
@@ -335,5 +342,48 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         {
             // ignore, we are not in a web project or spring web is not available
         }
+    }
+
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException
+    {
+        PropertyAnnotationsUtils.autowireProperties(bean, properties);
+        return true;
+    }
+
+    public Class predictBeanType(Class beanClass, String beanName)
+    {
+        return null;
+    }
+
+    public Constructor[] determineCandidateConstructors(Class beanClass, String beanName) throws BeansException
+    {
+        return null;
+    }
+
+    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException
+    {
+        return bean;
+    }
+
+    public Object postProcessBeforeInstantiation(Class beanClass, String beanName) throws BeansException
+    {
+        return null;
+    }
+
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean,
+        String beanName) throws BeansException
+    {
+
+        return pvs;
+    }
+
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException
+    {
+        return bean;
+    }
+
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException
+    {
+        return bean;
     }
 }

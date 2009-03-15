@@ -8,6 +8,10 @@
     <author email="fgiust(at)users.sourceforge.net">Fabrizio Giustina</author>
   </properties>
   <body>
+    <release version="2.1" date="2009-03-15" description="">
+      <action type="add" dev="fgiust">EnvironmentPropertyConfigurer now also inject properties in fields annotated with
+        the @Property annotation.</action>
+    </release>
     <release version="2.0.2" date="2008-09-18" description="">
       <action type="fix" dev="fgiust"> Added debug logs to DeploymentResolver, and solved resolution of webapp root when
         the root real path returned by the container ends with "/".</action>

@@ -1,4 +1,12 @@
 * text=auto !eol
 src/main/java/it/openutils/deployment/spring/DatabaseEnvironmentPropertyConfigurer.java svneol=native#text/plain
+src/main/java/it/openutils/deployment/spring/Property.java svneol=native#text/plain
+src/main/java/it/openutils/deployment/spring/PropertyAnnotationsUtils.java svneol=native#text/plain
 src/site/apt/index.apt svneol=native#text/plain
 src/site/changes/changes.xml svneol=native#text/plain
+src/test/java/it/openutils/deployment/spring/PropertyInjectBeanPostProcessorTest.java svneol=native#text/plain
+src/test/java/it/openutils/deployment/spring/TestBean.java svneol=native#text/plain
+src/test/resources/environment.properties svneol=native#text/plain
+src/test/resources/log4j.dtd svneol=native#text/xml
+src/test/resources/log4j.xml svneol=native#text/plain
+src/test/resources/spring-tests.xml svneol=native#text/plain
