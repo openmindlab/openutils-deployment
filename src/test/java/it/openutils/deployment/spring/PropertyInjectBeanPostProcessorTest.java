@@ -45,4 +45,11 @@ public class PropertyInjectBeanPostProcessorTest extends AbstractJUnit4SpringCon
     {
         Assert.assertEquals("property", testBean.getStringProperty());
     }
+
+    @Test
+    public void testSystemProperty()
+    {
+        Assert.assertEquals("property", System.getProperty("stringProperty"));
+    }
+
 }

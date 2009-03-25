@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -90,6 +91,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     private boolean inherit = true;
 
     /**
+     * Set all the properties configured as system properties.
+     */
+    private boolean exposeSystemProperties;
+
+    /**
      * Setter for <code>fileLocation</code>.
      * @param fileLocation The fileLocation to set.
      */
@@ -116,6 +122,15 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     public void setDefaultEnvironment(String defaultEnvironment)
     {
         this.defaultEnvironment = defaultEnvironment;
+    }
+
+    /**
+     * Set all the properties configured as system properties.
+     * @param exposeSystemProperties <code>true</code> if you want to set configured properties as system properties.
+     */
+    public void setExposeSystemProperties(boolean exposeSystemProperties)
+    {
+        this.exposeSystemProperties = exposeSystemProperties;
     }
 
     /**
@@ -227,6 +242,18 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             this.properties = props;
             super.setProperties(props);
+
+            if (exposeSystemProperties)
+            {
+                Iterator<Object> i = props.keySet().iterator();
+                while (i.hasNext())
+                {
+                    String key = (String) i.next();
+                    String value = (String) props.get(key);
+                    System.setProperty(key, value);
+                }
+
+            }
 
         }
 

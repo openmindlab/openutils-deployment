@@ -8,6 +8,9 @@
     <author email="fgiust(at)users.sourceforge.net">Fabrizio Giustina</author>
   </properties>
   <body>
+    <release version="2.1.1" date="2009-03-25" description="">
+      <action type="add" dev="fgiust">New "exposeSystemProperties" flag added to EnvironmentPropertyConfigurer</action>
+    </release>
     <release version="2.1" date="2009-03-15" description="">
       <action type="add" dev="fgiust">EnvironmentPropertyConfigurer now also inject properties in fields annotated with
         the @Property annotation.</action>
