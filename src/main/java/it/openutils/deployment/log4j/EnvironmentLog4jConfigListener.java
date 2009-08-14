@@ -56,13 +56,13 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
         if (exposeWebAppRoot(servletContext))
         {
             WebUtils.setWebAppRootSystemProperty(servletContext);
+        }
 
-            String servername = DeploymentResolver.resolveServerName();
-            if (servername != null)
-            {
-                System.setProperty("server.name", servername);
-                System.setProperty("server", servername);
-            }
+        String servername = DeploymentResolver.resolveServerName();
+        if (servername != null)
+        {
+            System.setProperty("server.name", servername);
+            System.setProperty("server", servername);
         }
 
         String locationList = servletContext.getInitParameter("log4jConfigLocation");

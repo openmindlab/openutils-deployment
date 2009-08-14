@@ -8,6 +8,10 @@
     <author email="fgiust(at)users.sourceforge.net">Fabrizio Giustina</author>
   </properties>
   <body>
+    <release version="2.1.2" date="in svn" description="">
+      <action type="update" dev="fgiust">EnvironmentLog4jConfigListener now exposes a "server" System property also when
+        log4jExposeWebAppRoot is set to false</action>
+    </release>
     <release version="2.1.1" date="2009-03-25" description="">
       <action type="add" dev="fgiust">New "exposeSystemProperties" flag added to EnvironmentPropertyConfigurer</action>
     </release>
