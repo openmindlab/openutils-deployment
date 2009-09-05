@@ -9,7 +9,39 @@
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
   <version>2.1.2-SNAPSHOT</version>
-  <description />
+  <description>Openutils deployment tools</description>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <url>http://lab.openmindonline.it/lab/products/deployment.html</url>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://lab.openmindonline.it/jira/browse/DEPLOY</url>
+  </issueManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>bundle</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptors>
+            <descriptor>${basedir}/src/main/assembly/assembly-bundle.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
