@@ -32,6 +32,9 @@ public class SampleBean
     @Property("stringProperty")
     private String stringProperty;
 
+    @Property("nested")
+    private String nestedProperty;
+
     /**
      * Returns the intProperty.
      * @return the intProperty
@@ -49,4 +52,14 @@ public class SampleBean
     {
         return stringProperty;
     }
+
+    /**
+     * Returns the nestedProperty.
+     * @return the nestedProperty
+     */
+    public String getNestedProperty()
+    {
+        return nestedProperty;
+    }
+
 }

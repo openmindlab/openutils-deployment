@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -42,6 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringValueResolver;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -95,6 +97,8 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      */
     private boolean exposeSystemProperties;
 
+    private String nullValue;
+
     /**
      * Setter for <code>fileLocation</code>.
      * @param fileLocation The fileLocation to set.
@@ -131,6 +135,13 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     public void setExposeSystemProperties(boolean exposeSystemProperties)
     {
         this.exposeSystemProperties = exposeSystemProperties;
+    }
+
+    @Override
+    public void setNullValue(String nullValue)
+    {
+        this.nullValue = nullValue;
+        super.setNullValue(nullValue);
     }
 
     /**
@@ -373,7 +384,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException
     {
-        PropertyAnnotationsUtils.autowireProperties(bean, properties);
+        PropertyAnnotationsUtils.autowireProperties(bean, new PlaceholderResolvingStringValueResolver(properties));
         return true;
     }
 
@@ -412,5 +423,26 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException
     {
         return bean;
+    }
+
+    /**
+     * BeanDefinitionVisitor that resolves placeholders in String values, delegating to the
+     * <code>parseStringValue</code> method of the containing class.
+     */
+    protected class PlaceholderResolvingStringValueResolver implements StringValueResolver
+    {
+
+        private final Properties props;
+
+        public PlaceholderResolvingStringValueResolver(Properties props)
+        {
+            this.props = props;
+        }
+
+        public String resolveStringValue(String strVal) throws BeansException
+        {
+            String value = parseStringValue(strVal, this.props, new HashSet());
+            return (value.equals(nullValue) ? null : value);
+        }
     }
 }

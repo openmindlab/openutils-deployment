@@ -6,3 +6,5 @@
 /pom.xml.releaseBackup
 /release.properties
 /target
+/temp-testng-customsuite.xml
+/test-output

@@ -52,4 +52,10 @@ public class PropertyInjectBeanPostProcessorTest extends AbstractJUnit4SpringCon
         Assert.assertEquals("property", System.getProperty("stringProperty"));
     }
 
+    @Test
+    public void testNestedProperty()
+    {
+        Assert.assertEquals("property replaced doublenested", testBean.getNestedProperty());
+    }
+
 }

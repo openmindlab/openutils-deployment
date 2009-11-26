@@ -17,10 +17,10 @@ package it.openutils.deployment.spring;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Properties;
 
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringValueResolver;
 
 
 /**
@@ -38,7 +38,7 @@ public final class PropertyAnnotationsUtils
         // don't instantiate
     }
 
-    public static void autowireProperties(final Object bean, final Properties properties)
+    public static void autowireProperties(final Object bean, final StringValueResolver valueResolver)
     {
         ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback()
         {
@@ -54,7 +54,7 @@ public final class PropertyAnnotationsUtils
                             "PropertyAutowired annotation is not supported on static fields");
                     }
 
-                    Object strValue = properties.get(annotation.value());
+                    Object strValue = valueResolver.resolveStringValue("${" + annotation.value() + "}");
 
                     if (strValue != null)
                     {
@@ -64,6 +64,8 @@ public final class PropertyAnnotationsUtils
                     }
                 }
             }
+
         });
     }
+
 }

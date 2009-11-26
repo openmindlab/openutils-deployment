@@ -9,6 +9,7 @@ src/site/apt/index.apt svneol=native#text/plain
 src/site/changes/changes.xml svneol=native#text/plain
 src/test/java/it/openutils/deployment/spring/PropertyInjectBeanPostProcessorTest.java svneol=native#text/plain
 src/test/java/it/openutils/deployment/spring/SampleBean.java svneol=native#text/plain
+src/test/resources/environment-base.properties svneol=native#text/plain
 src/test/resources/environment.properties svneol=native#text/plain
 src/test/resources/log4j.dtd svneol=native#text/xml
 src/test/resources/log4j.xml svneol=native#text/plain
