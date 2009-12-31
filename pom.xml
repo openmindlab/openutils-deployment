@@ -15,10 +15,10 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-  <url>http://lab.openmindonline.it/lab/products/deployment.html</url>
+  <url>http://www.openmindlab.com/lab/products/deployment.html</url>
   <issueManagement>
     <system>jira</system>
-    <url>http://lab.openmindonline.it/jira/browse/DEPLOY</url>
+    <url>http://jira.openmindlab.com/browse/DEPLOY</url>
   </issueManagement>
   <build>
     <plugins>
