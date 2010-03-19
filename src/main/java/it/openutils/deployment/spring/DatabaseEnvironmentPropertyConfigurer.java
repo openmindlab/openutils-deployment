@@ -1,7 +1,7 @@
 /**
  *
  * openutils deployment tools (http://www.openmindlab.com/lab/products/deployment.html)
- * Copyright(C) null-2010, Openmind S.r.l. http://www.openmindonline.it
+ * Copyright(C) 2007-2010, Openmind S.r.l. http://www.openmindonline.it
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
