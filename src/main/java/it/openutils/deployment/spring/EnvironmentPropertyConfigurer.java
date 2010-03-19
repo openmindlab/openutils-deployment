@@ -1,21 +1,18 @@
 /**
+ * Copyright Openmind http://www.openmindonline.it
  *
- * openutils deployment tools (http://www.openmindlab.com/lab/products/deployment.html)
- * Copyright(C) null-2010, Openmind S.r.l. http://www.openmindonline.it
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package it.openutils.deployment.spring;
 
 import java.beans.PropertyDescriptor;
@@ -26,8 +23,11 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -51,8 +51,31 @@ import org.springframework.web.context.WebApplicationContext;
 
 
 /**
+ * <p>
+ * A propertyconfigurer that can be used to dynamically select a list of property files based on the current
+ * environment.
+ * </p>
+ * <p>
+ * You can configure the <code>fileLocation</code> parameter with a list of file location, using variables for:
+ * </p>
+ * <ul>
+ * <li>the server name: ${env}</li>
+ * <li>the web application root folder name (only for web contexts): ${appl}</li>
+ * <li>any web context init parameter (only for web contexts): ${contextParam/paramname}</li>
+ * </ul>
+ * <p>
+ * <p>
+ * A sample value for the <code>fileLocation</code> parameter would be: <code>WEB-INF/config/${env}/my.properties, 
+ *  WEB-INF/config/${appl}/my.properties,
+ *  WEB-INF/config/${contextParam/instance}/my.properties, 
+ *  classpath:my-${env}.properties,classpath:default.properties</code>.
+ * </p>
+ * <p>
+ * After replacing all the known variables the resulting list is parsed and any existing file is merged in a single
+ * property list, used to configure the remaining spring context
+ * </p>
  * @author fgiust
- * @version $Id: $
+ * @version $Id: EnvironmentPropertyConfigurer.java 592 2010-03-19 13:24:12Z christian.strappazzon $
  */
 public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     implements
@@ -60,26 +83,14 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     SmartInstantiationAwareBeanPostProcessor
 {
 
-    /**
-     * Application name (webapp name) variable.
-     */
-    private static final String PROPERTY_APPL = "${appl}";
+    private String serverPropertyName = "env";
 
-    /**
-     * Environment (server name) variable.
-     */
-    private static final String PROPERTY_ENV = "${env}";
+    private String applicationPropertyName = "appl";
 
     /**
      * Logger.
      */
     private static Logger log = LoggerFactory.getLogger(EnvironmentPropertyConfigurer.class);
-
-    /**
-     * @deprecated use defaultLocation
-     */
-    @Deprecated
-    private String defaultEnvironment;
 
     private ServletContext servletContext;
 
@@ -121,14 +132,21 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     }
 
     /**
-     * Setter for <code>defaultEnvironment</code>.
-     * @param defaultEnvironment The defaultEnvironment to set.
-     * @deprecated use defaultLocation
+     * Sets the serverPropertyName.
+     * @param serverPropertyName the serverPropertyName to set
      */
-    @Deprecated
-    public void setDefaultEnvironment(String defaultEnvironment)
+    public void setServerPropertyName(String serverPropertyName)
     {
-        this.defaultEnvironment = defaultEnvironment;
+        this.serverPropertyName = serverPropertyName;
+    }
+
+    /**
+     * Sets the applicationPropertyName.
+     * @param applicationPropertyName the applicationPropertyName to set
+     */
+    public void setApplicationPropertyName(String applicationPropertyName)
+    {
+        this.applicationPropertyName = applicationPropertyName;
     }
 
     /**
@@ -150,11 +168,27 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
     {
+
+        Map<String, String> initParametersMap = new HashMap<String, String>();
+
         if (fileLocation != null)
         {
+
+            if (this.servletContext != null)
+            {
+
+                Enumeration<String> initParameters = servletContext.getInitParameterNames();
+                while (initParameters.hasMoreElements())
+                {
+                    String paramName = initParameters.nextElement();
+                    initParametersMap.put("${contextParam/" + paramName + "}", servletContext
+                        .getInitParameter(paramName));
+                }
+            }
 
             String hostname = null;
             try
@@ -162,6 +196,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 hostname = StringUtils.substringBefore(
                     StringUtils.lowerCase(InetAddress.getLocalHost().getHostName()),
                     ".");
+                initParametersMap.put("${" + serverPropertyName + "}", hostname);
             }
             catch (UnknownHostException e)
             {
@@ -177,23 +212,14 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             if (applName != null)
             {
                 System.setProperty("appl", applName);
+                initParametersMap.put("${" + applicationPropertyName + "}", applName);
             }
 
             URL propertyUrl = null;
 
             String fileLocationFull = fileLocation;
 
-            if (defaultEnvironment != null)
-            {
-                log.warn("Usage of \"defaultEnvironment\" is deprecated, please specify the fallback location "
-                    + "as the last comma separated value in \"fileLocation\"");
-                fileLocationFull = fileLocationFull
-                    + ","
-                    + StringUtils.replace(fileLocationFull, PROPERTY_ENV, this.defaultEnvironment);
-            }
-
-            String replacedLocations = StringUtils.replace(fileLocationFull, PROPERTY_ENV, hostname);
-            replacedLocations = StringUtils.replace(replacedLocations, PROPERTY_APPL, applName);
+            String replacedLocations = replaceAll(initParametersMap, fileLocationFull);
 
             String[] locations = StringUtils.split(replacedLocations, ",");
 
@@ -272,6 +298,24 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         }
 
         super.postProcessBeanFactory(beanFactory);
+    }
+
+    /**
+     * @param propertyenv
+     * @param hostname
+     * @param fileLocationFull
+     * @return
+     */
+    private String replaceAll(Map<String, String> params, String fileLocationFull)
+    {
+        String replacedLocations = fileLocationFull;
+
+        for (Map.Entry<String, String> param : params.entrySet())
+        {
+            replacedLocations = StringUtils.replace(replacedLocations, param.getKey(), param.getValue());
+        }
+
+        return replacedLocations;
     }
 
     private URL getResource(String resource)
