@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.openutils</groupId>
     <artifactId>openutils-parent</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
