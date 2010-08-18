@@ -4,7 +4,7 @@
     <groupId>net.sourceforge.openutils</groupId>
     <artifactId>openutils-parent</artifactId>
     <relativePath>../openutils-parent</relativePath>
-    <version>1.5</version>
+    <version>1.6</version>
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
