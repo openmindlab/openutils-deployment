@@ -208,13 +208,13 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             if (hostname != null)
             {
-                System.setProperty("env", hostname);
+                System.setProperty(serverPropertyName, hostname);
             }
 
             String applName = getApplicationName();
             if (applName != null)
             {
-                System.setProperty("appl", applName);
+                System.setProperty(applicationPropertyName, applName);
                 initParametersMap.put("${" + applicationPropertyName + "}", applName);
             }
 
