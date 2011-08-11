@@ -188,8 +188,9 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 while (initParameters.hasMoreElements())
                 {
                     String paramName = initParameters.nextElement();
-                    initParametersMap.put("${contextParam/" + paramName + "}", servletContext
-                        .getInitParameter(paramName));
+                    initParametersMap.put(
+                        "${contextParam/" + paramName + "}",
+                        servletContext.getInitParameter(paramName));
                 }
             }
 
@@ -240,7 +241,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 if (propertyUrl != null)
                 {
                     found = true;
-                    log.debug("Loading property file at {}", loc);
+                    log.debug("Loading property file at {} from {}", loc, propertyUrl);
 
                     Resource resource = new UrlResource(propertyUrl);
                     InputStream is = null;
@@ -274,7 +275,10 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                         break;
                     }
                 }
-                log.debug("Property file not found at {}", loc);
+                else
+                {
+                    log.debug("Property file not found at {}", loc);
+                }
 
             }
 
