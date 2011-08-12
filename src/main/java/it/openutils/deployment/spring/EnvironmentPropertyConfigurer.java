@@ -31,7 +31,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
@@ -48,6 +50,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringValueResolver;
 import org.springframework.web.context.WebApplicationContext;
@@ -65,6 +68,7 @@ import org.springframework.web.context.WebApplicationContext;
  * <li>the server name: ${env}</li>
  * <li>the web application root folder name (only for web contexts): ${appl}</li>
  * <li>any web context init parameter (only for web contexts): ${contextParam/paramname}</li>
+ * <li>any system property: ${systemProperty/paramname}</li>
  * </ul>
  * <p>
  * <p>
@@ -191,6 +195,18 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                     initParametersMap.put(
                         "${contextParam/" + paramName + "}",
                         servletContext.getInitParameter(paramName));
+                }
+            }
+
+            Set<Entry<Object, Object>> entrySet = System.getProperties().entrySet();
+            if (!CollectionUtils.isEmpty(entrySet))
+            {
+                Iterator<Entry<Object, Object>> properties = entrySet.iterator();
+                while (properties.hasNext())
+                {
+                    Entry<Object, Object> entry = properties.next();
+                    String propName = (String) entry.getKey();
+                    initParametersMap.put("${systemProperty/" + propName + "}", (String) entry.getValue());
                 }
             }
 
