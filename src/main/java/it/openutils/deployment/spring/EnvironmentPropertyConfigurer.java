@@ -297,6 +297,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 {
                     String key = (String) i.next();
                     String value = (String) props.get(key);
+
+                    if (System.getProperty(key) != null)
+                    {
+                        log.warn("Overwriting system property {}", key);
+                    }
                     System.setProperty(key, value);
                 }
 
