@@ -381,7 +381,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     {
         if (servletContext != null)
         {
-            String url = servletContext.getRealPath("/");
+            String url = StringUtils.defaultString(servletContext.getRealPath("/"));
             url = StringUtils.replace(url, "\\", "/");
             if (url.endsWith("/"))
             {
