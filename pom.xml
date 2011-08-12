@@ -12,6 +12,11 @@
   <version>2.2.1-SNAPSHOT</version>
   <description>Openutils deployment tools</description>
   <inceptionYear>2007</inceptionYear>
+  <scm>
+    <connection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</connection>
+    <developerConnection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</developerConnection>
+    <url>http://openutils.svn.sourceforge.net/viewcvs.cgi/openutils/trunk/openutils-deployment</url>
+  </scm>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
