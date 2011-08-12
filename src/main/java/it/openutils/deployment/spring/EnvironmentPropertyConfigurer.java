@@ -216,22 +216,38 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 hostname = StringUtils.substringBefore(
                     StringUtils.lowerCase(InetAddress.getLocalHost().getHostName()),
                     ".");
-                initParametersMap.put("${" + serverPropertyName + "}", hostname);
             }
             catch (UnknownHostException e)
             {
                 log.error(e.getMessage()); // should not happen
             }
+            String applName = getApplicationName();
 
             if (hostname != null)
             {
-                System.setProperty(serverPropertyName, hostname);
+                if (exposeSystemProperties)
+                {
+                    if (System.getProperty(serverPropertyName) != null)
+                    {
+                        log.warn("Overwriting system property {}", serverPropertyName);
+                    }
+                    System.setProperty(serverPropertyName, hostname);
+                }
+                initParametersMap.put("${" + serverPropertyName + "}", hostname);
             }
 
-            String applName = getApplicationName();
             if (applName != null)
             {
-                System.setProperty(applicationPropertyName, applName);
+
+                if (exposeSystemProperties)
+                {
+                    if (System.getProperty(applicationPropertyName) != null)
+                    {
+                        log.warn("Overwriting system property {}", applicationPropertyName);
+                    }
+                    System.setProperty(applicationPropertyName, applName);
+                }
+
                 initParametersMap.put("${" + applicationPropertyName + "}", applName);
             }
 
