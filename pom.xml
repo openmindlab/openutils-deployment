@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.sourceforge.openutils</groupId>
@@ -9,13 +8,13 @@
   </parent>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
-  <version>2.2.1-SNAPSHOT</version>
+  <version>2.2.1</version>
   <description>Openutils deployment tools</description>
   <inceptionYear>2007</inceptionYear>
   <scm>
-    <connection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</connection>
-    <developerConnection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/trunk/openutils-deployment</developerConnection>
-    <url>http://openutils.svn.sourceforge.net/viewcvs.cgi/openutils/trunk/openutils-deployment</url>
+    <connection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-2.2.1</connection>
+    <developerConnection>scm:svn:https://openutils.svn.sourceforge.net/svnroot/openutils/tags/openutils-deployment-2.2.1</developerConnection>
+    <url>http://openutils.svn.sourceforge.net/viewcvs.cgi/openutils/tags/openutils-deployment-2.2.1</url>
   </scm>
   <licenses>
     <license>
