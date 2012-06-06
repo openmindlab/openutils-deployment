@@ -117,6 +117,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      * Set all the properties configured as system properties.
      */
     private boolean exposeSystemProperties;
+    
+    /**
+     * Expose the server name as system property.
+     */
+    private boolean exposeServerName;
 
     private String nullValue;
 
@@ -163,6 +168,14 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     public void setExposeSystemProperties(boolean exposeSystemProperties)
     {
         this.exposeSystemProperties = exposeSystemProperties;
+    }
+    
+    /**
+     * Expose the server name as system property. 
+     * @param exposeServerName <code>true</code> if you want to set the server name as system property (with the key stated in <code>serverPropertyName</code>).
+     */
+    public void setExposeServerName(boolean exposeServerName) {
+        this.exposeServerName = exposeServerName;
     }
 
     @Override
@@ -225,7 +238,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
 
             if (hostname != null)
             {
-                if (exposeSystemProperties)
+                if (exposeSystemProperties || exposeServerName)
                 {
                     if (System.getProperty(serverPropertyName) != null)
                     {
