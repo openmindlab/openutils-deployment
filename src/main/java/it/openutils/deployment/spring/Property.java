@@ -1,7 +1,7 @@
 /**
  *
  * openutils deployment tools (http://www.openmindlab.com/lab/products/deployment.html)
- * Copyright(C) 2007-2012, Openmind S.r.l. http://www.openmindonline.it
+ * Copyright(C) 2007-2019, Openmind S.r.l. http://www.openmindonline.it
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package it.openutils.deployment.spring;
 
 import java.lang.annotation.ElementType;
