@@ -139,25 +139,6 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>bundle</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <attach>false</attach>
-          <descriptors>
-            <descriptor>${basedir}/src/main/assembly/assembly-bundle.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.0.1</version>
         <configuration>
