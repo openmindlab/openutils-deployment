@@ -3,13 +3,13 @@
   <groupId>net.sourceforge.openutils</groupId>
   <artifactId>openutils-deployment</artifactId>
   <name>openutils deployment tools</name>
-  <version>3.0.0</version>
+  <version>3.0.1-SNAPSHOT</version>
   <description>Openutils deployment tools</description>
   <inceptionYear>2007</inceptionYear>
   <scm>
     <connection>scm:git:https://github.com/openmindlab/openutils-deployment.git</connection>
     <url>https://github.com/openmindlab/openutils-deployment</url>
-    <tag>openutils-deployment-3.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
   <organization>
     <name>Openmind</name>
