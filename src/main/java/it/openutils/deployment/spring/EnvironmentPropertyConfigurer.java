@@ -17,17 +17,14 @@
  */
 package it.openutils.deployment.spring;
 
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,22 +37,14 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.Constants;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringValueResolver;
-import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -87,10 +76,7 @@ import org.springframework.web.context.WebApplicationContext;
  * @author fgiust
  * @version $Id: EnvironmentPropertyConfigurer.java 592 2010-03-19 13:24:12Z christian.strappazzon $
  */
-public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
-    implements
-    ApplicationContextAware,
-    SmartInstantiationAwareBeanPostProcessor
+public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer implements ApplicationContextAware
 {
 
     private String serverPropertyName = "env";
@@ -125,26 +111,6 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      * Expose the server name as system property.
      */
     private boolean exposeServerName;
-
-    private String nullValue;
-
-    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
-
-    private static final Constants constants = new Constants(PropertyPlaceholderConfigurer.class);
-
-    @Override
-    public void setSystemPropertiesModeName(String constantName) throws IllegalArgumentException
-    {
-        super.setSystemPropertiesModeName(constantName);
-        this.systemPropertiesMode = constants.asNumber(constantName).intValue();
-    }
-
-    @Override
-    public void setSystemPropertiesMode(int systemPropertiesMode)
-    {
-        super.setSystemPropertiesMode(systemPropertiesMode);
-        this.systemPropertiesMode = systemPropertiesMode;
-    }
 
     /**
      * Setter for <code>fileLocation</code>.
@@ -211,12 +177,11 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
     {
 
-        Map<String, String> initParametersMap = new HashMap<String, String>();
+        Map<String, String> initParametersMap = new HashMap<>();
 
         if (fileLocation != null)
         {
@@ -236,10 +201,10 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             Set<Entry<Object, Object>> entrySet = System.getProperties().entrySet();
             if (!CollectionUtils.isEmpty(entrySet))
             {
-                Iterator<Entry<Object, Object>> properties = entrySet.iterator();
-                while (properties.hasNext())
+                Iterator<Entry<Object, Object>> props = entrySet.iterator();
+                while (props.hasNext())
                 {
-                    Entry<Object, Object> entry = properties.next();
+                    Entry<Object, Object> entry = props.next();
                     String propName = (String) entry.getKey();
                     initParametersMap.put("${systemProperty/" + propName + "}", (String) entry.getValue());
                 }
@@ -507,95 +472,4 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         }
     }
 
-    public boolean postProcessAfterInstantiation(Object bean, String beanName)
-    {
-        PropertyAnnotationsUtils.autowireProperties(bean, new PlaceholderResolvingStringValueResolver(properties));
-        return true;
-    }
-
-    public Class predictBeanType(Class beanClass, String beanName)
-    {
-        return null;
-    }
-
-    public Constructor[] determineCandidateConstructors(Class beanClass, String beanName)
-    {
-        return null;
-    }
-
-    public Object getEarlyBeanReference(Object bean, String beanName)
-    {
-        return bean;
-    }
-
-    public Object postProcessBeforeInstantiation(Class beanClass, String beanName)
-    {
-        return null;
-    }
-
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean,
-        String beanName)
-    {
-
-        return pvs;
-    }
-
-    public Object postProcessBeforeInitialization(Object bean, String beanName)
-    {
-        return bean;
-    }
-
-    public Object postProcessAfterInitialization(Object bean, String beanName)
-    {
-        return bean;
-    }
-
-    private class PlaceholderResolvingStringValueResolver implements StringValueResolver
-    {
-
-        private final PropertyPlaceholderHelper helper;
-
-        private final PlaceholderResolver resolver;
-
-        public PlaceholderResolvingStringValueResolver(Properties props)
-        {
-            this.helper = new PropertyPlaceholderHelper(
-                placeholderPrefix,
-                placeholderSuffix,
-                valueSeparator,
-                ignoreUnresolvablePlaceholders);
-            this.resolver = new PropertyPlaceholderConfigurerResolver(props);
-        }
-
-        @Override
-        @Nullable
-        public String resolveStringValue(String strVal) throws BeansException
-        {
-            String resolved = this.helper.replacePlaceholders(strVal, this.resolver);
-            if (trimValues)
-            {
-                resolved = resolved.trim();
-            }
-            return (resolved.equals(nullValue) ? null : resolved);
-        }
-    }
-
-    private final class PropertyPlaceholderConfigurerResolver implements PlaceholderResolver
-    {
-
-        private final Properties props;
-
-        private PropertyPlaceholderConfigurerResolver(Properties props)
-        {
-            this.props = props;
-        }
-
-        @Override
-        @Nullable
-        public String resolvePlaceholder(String placeholderName)
-        {
-            return EnvironmentPropertyConfigurer.this
-                .resolvePlaceholder(placeholderName, this.props, systemPropertiesMode);
-        }
-    }
 }
