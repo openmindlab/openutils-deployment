@@ -18,13 +18,22 @@
 
 package it.openutils.deployment.log4j;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
-import org.springframework.util.Log4jConfigurer;
-import org.springframework.web.util.Log4jConfigListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.springframework.web.util.WebUtils;
 
 
@@ -32,18 +41,18 @@ import org.springframework.web.util.WebUtils;
  * @author Fabrizio Giustina
  * @version $Id$
  */
-public class EnvironmentLog4jConfigListener extends Log4jConfigListener
+public class EnvironmentLog4jConfigListener implements ServletContextListener
 {
 
     /**
      * Default value for the DEFAULT_INITIALIZATION_PARAMETER parameter.
      */
     public static final String DEFAULT_INITIALIZATION_PARAMETER = //
-    "WEB-INF/config/${servername}/${webapp}/log4j.xml," //$NON-NLS-1$
-        + "WEB-INF/config/${servername}/log4j.xml," //$NON-NLS-1$
-        + "WEB-INF/config/${webapp}/log4j.xml," //$NON-NLS-1$
-        + "WEB-INF/config/default/log4j.xml," //$NON-NLS-1$
-        + "WEB-INF/config/log4j.xml"; //$NON-NLS-1$
+        "WEB-INF/config/${servername}/${webapp}/log4j2.xml," //$NON-NLS-1$
+            + "WEB-INF/config/${servername}/log4j2.xml," //$NON-NLS-1$
+            + "WEB-INF/config/${webapp}/log4j2.xml," //$NON-NLS-1$
+            + "WEB-INF/config/default/log4j2.xml," //$NON-NLS-1$
+            + "WEB-INF/config/log4j2.xml"; //$NON-NLS-1$
 
     /**
      * {@inheritDoc}
@@ -52,6 +61,11 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
     public void contextInitialized(ServletContextEvent event)
     {
         initLogging(event.getServletContext());
+    }
+
+    public void contextDestroyed(ServletContextEvent event)
+    {
+        LogManager.shutdown();
     }
 
     public static void initLogging(ServletContext servletContext)
@@ -75,11 +89,11 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
             locationList = DEFAULT_INITIALIZATION_PARAMETER;
         }
 
-        String location;
+        File location;
 
         try
         {
-            location = DeploymentResolver.resolveServerRelativeLocation(servletContext, locationList).getAbsolutePath();
+            location = DeploymentResolver.resolveServerRelativeLocation(servletContext, locationList);
         }
         catch (FileNotFoundException ex)
         {
@@ -88,29 +102,16 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
         if (location != null)
         {
             servletContext.log("Initializing Log4J from [" + location + "]");
-            try
+            try (InputStream log4jConfigStream = Files.newInputStream(location.toPath(), StandardOpenOption.READ))
             {
 
-                String intervalString = servletContext.getInitParameter("log4jRefreshInterval");
-                if (intervalString != null)
-                {
-                    try
-                    {
-                        long refreshInterval = Long.parseLong(intervalString);
-                        Log4jConfigurer.initLogging(location, refreshInterval);
-                    }
-                    catch (NumberFormatException ex)
-                    {
-                        throw new IllegalArgumentException("Invalid 'log4jRefreshInterval' parameter: "
-                            + ex.getMessage());
-                    }
-                }
-                else
-                {
-                    Log4jConfigurer.initLogging(location);
-                }
+                ConfigurationSource source = location.exists()
+                    ? new ConfigurationSource(log4jConfigStream, location)
+                    : new ConfigurationSource(log4jConfigStream); // @patch
+                Configuration configuration = ConfigurationFactory.getInstance().getConfiguration(null, source);
+                ((LoggerContext) LogManager.getContext(false)).start(configuration);
             }
-            catch (FileNotFoundException ex)
+            catch (IOException ex)
             {
                 throw new IllegalArgumentException("Invalid 'log4jConfigLocation' parameter: " + ex.getMessage());
             }
@@ -120,7 +121,7 @@ public class EnvironmentLog4jConfigListener extends Log4jConfigListener
     private static boolean exposeWebAppRoot(ServletContext servletContext)
     {
         String exposeWebAppRootParam = servletContext.getInitParameter("log4jExposeWebAppRoot");
-        return exposeWebAppRootParam == null || Boolean.valueOf(exposeWebAppRootParam).booleanValue();
+        return exposeWebAppRootParam == null || Boolean.parseBoolean(exposeWebAppRootParam);
     }
 
 }

@@ -26,8 +26,8 @@ import java.text.MessageFormat;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,10 @@ public class DeploymentResolver
             MessageFormat
                 .format(
                     "No configuration found using location list {0}. [servername] is [{1}], [webapp] is [{2}] and base path is [{3}]", //$NON-NLS-1$
-                    new Object[]{ArrayUtils.toString(propertiesLocation), servername, webapp, rootPath }));
+                    ArrayUtils.toString(propertiesLocation),
+                    servername,
+                    webapp,
+                    rootPath));
 
     }
 

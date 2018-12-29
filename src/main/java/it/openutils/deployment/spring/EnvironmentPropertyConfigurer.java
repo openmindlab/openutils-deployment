@@ -37,8 +37,8 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -48,11 +48,15 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.Constants;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringValueResolver;
+import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -117,13 +121,31 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      * Set all the properties configured as system properties.
      */
     private boolean exposeSystemProperties;
-    
+
     /**
      * Expose the server name as system property.
      */
     private boolean exposeServerName;
 
     private String nullValue;
+
+    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_FALLBACK;
+
+    private static final Constants constants = new Constants(PropertyPlaceholderConfigurer.class);
+
+    @Override
+    public void setSystemPropertiesModeName(String constantName) throws IllegalArgumentException
+    {
+        super.setSystemPropertiesModeName(constantName);
+        this.systemPropertiesMode = constants.asNumber(constantName).intValue();
+    }
+
+    @Override
+    public void setSystemPropertiesMode(int systemPropertiesMode)
+    {
+        super.setSystemPropertiesMode(systemPropertiesMode);
+        this.systemPropertiesMode = systemPropertiesMode;
+    }
 
     /**
      * Setter for <code>fileLocation</code>.
@@ -169,12 +191,14 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     {
         this.exposeSystemProperties = exposeSystemProperties;
     }
-    
+
     /**
-     * Expose the server name as system property. 
-     * @param exposeServerName <code>true</code> if you want to set the server name as system property (with the key stated in <code>serverPropertyName</code>).
+     * Expose the server name as system property.
+     * @param exposeServerName <code>true</code> if you want to set the server name as system property (with the key
+     * stated in <code>serverPropertyName</code>).
      */
-    public void setExposeServerName(boolean exposeServerName) {
+    public void setExposeServerName(boolean exposeServerName)
+    {
         this.exposeServerName = exposeServerName;
     }
 
@@ -190,7 +214,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
     {
 
         Map<String, String> initParametersMap = new HashMap<String, String>();
@@ -205,9 +229,8 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
                 while (initParameters.hasMoreElements())
                 {
                     String paramName = initParameters.nextElement();
-                    initParametersMap.put(
-                        "${contextParam/" + paramName + "}",
-                        servletContext.getInitParameter(paramName));
+                    initParametersMap
+                        .put("${contextParam/" + paramName + "}", servletContext.getInitParameter(paramName));
                 }
             }
 
@@ -226,9 +249,8 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
             String hostname = null;
             try
             {
-                hostname = StringUtils.substringBefore(
-                    StringUtils.lowerCase(InetAddress.getLocalHost().getHostName()),
-                    ".");
+                hostname = StringUtils
+                    .substringBefore(StringUtils.lowerCase(InetAddress.getLocalHost().getHostName()), ".");
             }
             catch (UnknownHostException e)
             {
@@ -470,7 +492,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
     /**
      * {@inheritDoc}
      */
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
+    public void setApplicationContext(ApplicationContext applicationContext)
     {
         // don't implement ServletContextAware or it will fail if javax.servlet dependency is not available
         try
@@ -486,7 +508,7 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         }
     }
 
-    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException
+    public boolean postProcessAfterInstantiation(Object bean, String beanName)
     {
         PropertyAnnotationsUtils.autowireProperties(bean, new PlaceholderResolvingStringValueResolver(properties));
         return true;
@@ -497,56 +519,84 @@ public class EnvironmentPropertyConfigurer extends PropertyPlaceholderConfigurer
         return null;
     }
 
-    public Constructor[] determineCandidateConstructors(Class beanClass, String beanName) throws BeansException
+    public Constructor[] determineCandidateConstructors(Class beanClass, String beanName)
     {
         return null;
     }
 
-    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException
+    public Object getEarlyBeanReference(Object bean, String beanName)
     {
         return bean;
     }
 
-    public Object postProcessBeforeInstantiation(Class beanClass, String beanName) throws BeansException
+    public Object postProcessBeforeInstantiation(Class beanClass, String beanName)
     {
         return null;
     }
 
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean,
-        String beanName) throws BeansException
+        String beanName)
     {
 
         return pvs;
     }
 
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException
+    public Object postProcessBeforeInitialization(Object bean, String beanName)
     {
         return bean;
     }
 
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException
+    public Object postProcessAfterInitialization(Object bean, String beanName)
     {
         return bean;
     }
 
-    /**
-     * BeanDefinitionVisitor that resolves placeholders in String values, delegating to the
-     * <code>parseStringValue</code> method of the containing class.
-     */
-    protected class PlaceholderResolvingStringValueResolver implements StringValueResolver
+    private class PlaceholderResolvingStringValueResolver implements StringValueResolver
+    {
+
+        private final PropertyPlaceholderHelper helper;
+
+        private final PlaceholderResolver resolver;
+
+        public PlaceholderResolvingStringValueResolver(Properties props)
+        {
+            this.helper = new PropertyPlaceholderHelper(
+                placeholderPrefix,
+                placeholderSuffix,
+                valueSeparator,
+                ignoreUnresolvablePlaceholders);
+            this.resolver = new PropertyPlaceholderConfigurerResolver(props);
+        }
+
+        @Override
+        @Nullable
+        public String resolveStringValue(String strVal) throws BeansException
+        {
+            String resolved = this.helper.replacePlaceholders(strVal, this.resolver);
+            if (trimValues)
+            {
+                resolved = resolved.trim();
+            }
+            return (resolved.equals(nullValue) ? null : resolved);
+        }
+    }
+
+    private final class PropertyPlaceholderConfigurerResolver implements PlaceholderResolver
     {
 
         private final Properties props;
 
-        public PlaceholderResolvingStringValueResolver(Properties props)
+        private PropertyPlaceholderConfigurerResolver(Properties props)
         {
             this.props = props;
         }
 
-        public String resolveStringValue(String strVal) throws BeansException
+        @Override
+        @Nullable
+        public String resolvePlaceholder(String placeholderName)
         {
-            String value = parseStringValue(strVal, this.props, new HashSet());
-            return (value.equals(nullValue) ? null : value);
+            return EnvironmentPropertyConfigurer.this
+                .resolvePlaceholder(placeholderName, this.props, systemPropertiesMode);
         }
     }
 }
